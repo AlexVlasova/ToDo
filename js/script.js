@@ -1,22 +1,28 @@
 // Создаем самовызывающуюся функцию чтоб не загрязнять глобальную область видимости
 (function () {
+    const states = {
+        0: 'task-not-ready',
+        1: 'task-in-progress',
+        2: 'task-ready'
+    }
+
     // Исходные данные (должны подгружаться с бд, но это я организовать не могу пока))
     let tasks = [
         {
             name: 'Почистить зубы',
-            state: 'not ready'
+            state: 'task-not-ready'
         },
         {
             name: 'Помыть посуду',
-            state: 'not ready'
+            state: 'task-not-ready'
         },
         {
             name: 'Сделать уроки',
-            state: 'ready'
+            state: 'task-ready'
         },
         {
             name: 'Придумать игру',
-            state: 'not ready'
+            state: 'task-in-progress'
         }
 
     ];
@@ -24,9 +30,9 @@
     // Функция для отрисовки новых заданий
     function renderTask(title, id, state) {
         return `
-            <li class="task ${state === 'ready' ? 'task-done' : ''}">
+            <li class="task ${state}">
                 <div class="task-left">
-                    <input type="checkbox" name="" id="${id}" class="task-checkbox" ${state === 'ready' ? 'checked' : ''}>
+                    <input type="checkbox" name="" id="${id}" class="task-checkbox" ${state === 'task-ready' ? 'checked' : ''}>
                     <label for="${id}" class="task-name">${title}</label>
                 </div>
                 <div class="task-right">
@@ -41,7 +47,7 @@
     function addNewTask(title) {
         tasks.push({
             name: title,
-            state: 'not ready'
+            state: 'task-not-ready'
         });
 
         renderAllTasks();
@@ -87,21 +93,25 @@
         // Удаляем задачу
         if (target.classList.contains('delete-btn')) {
             deleteTask(taskChecker.id);
+            // Выходим, чтоб не обрабатывалось последнее условие в функции (клик по карточке для изменения состояния)
             return;
         }
 
         // Редактируем заметку
         if (target.classList.contains('edit-btn')) {
             editTaskForm(taskValue, taskChecker.id);
+            // Выходим, чтоб не обрабатывалось последнее условие в функции (клик по карточке для изменения состояния)
             return;
         }
 
         // Изменяем состояние задания по клику      
         if (task) {
-            if (task.classList.contains('task-done')) {
-                changeState(taskChecker.id, 'not ready');
+            if (task.classList.contains('task-ready')) {
+                changeState(taskChecker.id, 'task-not-ready');
+            } else if (task.classList.contains('task-in-progress')) {
+                changeState(taskChecker.id, 'task-ready');
             } else {
-                changeState(taskChecker.id, 'ready');
+                changeState(taskChecker.id, 'task-in-progress');
             }
             return;
         }
@@ -159,8 +169,6 @@
             button = target.closest('button'),
             formContainer = target.closest('form'),
             newTaskInput = document.querySelector('.title-input');
-
-        console.log(newTaskInput);
 
         if (button) {
             if (button.classList.contains('ok')) {

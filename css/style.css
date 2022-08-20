@@ -40,8 +40,6 @@
     padding: 15px;
     border-radius: 10px;
     border: 1px solid rgba(68, 64, 84, 0.3);
-    /* max-width: 100%;
-    overflow: hidden; */
 }
 
 .task-left {
@@ -72,6 +70,10 @@
 
 .task:hover .edit-btn {
     background-image: url(../img/edit.svg);
+}
+
+.task-in-progress {
+    background: linear-gradient(270deg, rgba(255,255,255,1) 30%, rgba(177,210,244,1) 100%);
 }
 
 .task-ready {
