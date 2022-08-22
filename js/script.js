@@ -85,6 +85,8 @@
 
     // Обработаем клики по области задач
     doList.addEventListener('click', (e) => {
+        e.preventDefault();
+
         const target = e.target,
             task = target.closest('.task'),
             taskValue = task.querySelector('.task-name').textContent,
@@ -165,6 +167,7 @@
 
     // Клик на кнопки внутри формы
     editForm.addEventListener('click', (e) => {
+        e.preventDefault();
         const target = e.target,
             button = target.closest('button'),
             formContainer = target.closest('form'),
