@@ -29,18 +29,24 @@
 
     // Функция для отрисовки новых заданий
     function renderTask(title, id, state) {
-        return `
-            <li class="task ${state}">
-                <div class="task-left">
-                    <input type="checkbox" name="" id="${id}" class="task-checkbox" ${state === 'task-ready' ? 'checked' : ''}>
-                    <label for="${id}" class="task-name">${title}</label>
-                </div>
-                <div class="task-right">
-                    <div class="edit-btn"></div>
-                    <div class="delete-btn"></div>
-                </div>
-            </li>
+        let newElem = document.createElement('li');
+        newElem.classList.add('task', `${state}`);
+        newElem.innerHTML = `
+            <div class="task-left">
+                <input type="checkbox" name="" id="${id}" class="task-checkbox" ${state === 'task-ready' ? 'checked' : ''}>
+                <label for="${id}" class="task-name">${title}</label>
+            </div>
+            <div class="task-right">
+                <div class="edit-btn"></div>
+                <div class="delete-btn"></div>
+            </div>
         `;
+
+        // реализовано через textContent, чтобы скрипты не вставлялись на страницу
+        const innerTitle = newElem.querySelector('.task-name');
+        innerTitle.textContent = title;
+
+        doList.append(newElem);
     }
 
     // Добавить новое дело пользователя
@@ -55,7 +61,6 @@
 
     // Изменить название задания
     function changeTaskName(id, value) {
-        console.log(id, value);
         tasks[id].name = value;
 
         renderAllTasks();
@@ -67,7 +72,7 @@
     function renderAllTasks () {
         doList.innerHTML = '';
         tasks.forEach((task, id) => {
-            doList.innerHTML += renderTask(task.name, id, task.state);
+            renderTask(task.name, id, task.state);
         });
     }
 
@@ -93,14 +98,15 @@
             taskChecker = task.querySelector('input[type="checkbox"]');
 
         // Удаляем задачу
-        if (target.classList.contains('delete-btn')) {
+        if (target && target.classList.contains('delete-btn')) {
             deleteTask(taskChecker.id);
+            removeNewTaskForm();
             // Выходим, чтоб не обрабатывалось последнее условие в функции (клик по карточке для изменения состояния)
             return;
         }
 
         // Редактируем заметку
-        if (target.classList.contains('edit-btn')) {
+        if (target && target.classList.contains('edit-btn')) {
             editTaskForm(taskValue, taskChecker.id);
             // Выходим, чтоб не обрабатывалось последнее условие в функции (клик по карточке для изменения состояния)
             return;
